@@ -135,12 +135,10 @@ const LoginPage = () => {
         <div className="mt-8 flex items-center justify-center gap-4 text-slate-400">
            <div className="h-px w-8 bg-slate-200" />
            <a
-             href="https://www.botivate.in/"
-             target="_blank"
-             rel="noopener noreferrer"
+             href="#"
              className="text-[10px] font-black uppercase tracking-[0.2em] hover:text-indigo-600 transition-colors"
            >
-             Powered by BOTIVATE
+             Powered by CODEBRIDGEX
            </a>
            <div className="h-px w-8 bg-slate-200" />
         </div>

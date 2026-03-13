@@ -191,8 +191,8 @@ export default function AdminLayout({ children }) {
           
           <div className="mt-6 flex flex-col items-center gap-1">
              <span className="text-[10px] text-slate-400 uppercase tracking-wider">Solution provided by</span>
-             <a href="https://www.botivate.in/" target="_blank" rel="noopener" className="flex items-center gap-1.5 grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100">
-                <span className="text-xs font-black text-indigo-600 tracking-tighter">BOTIVATE</span>
+             <a href="#" className="flex items-center gap-1.5 grayscale hover:grayscale-0 transition-all duration-300 opacity-60 hover:opacity-100">
+                <span className="text-xs font-black text-indigo-600 tracking-tighter">CODEBRIDGEX</span>
              </a>
           </div>
         </div>
