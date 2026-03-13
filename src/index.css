@@ -1,114 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
+:root {
+  --primary: #6366f1;
+  --primary-dark: #4f46e5;
+  --secondary: #ec4899;
+  --accent: #8b5cf6;
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --sidebar-bg: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.8);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Premium Gradients */
 .gradient-bg {
-  background: linear-gradient(to right, #9333ea, #db2777);
-}
-.gradient-bg2 {
-  background: linear-gradient(to right, #f10303, #f4cedf);
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
 }
 
-.gradient-bg:hover {
-  background: linear-gradient(to right, #7e22ce, #be185d);
+.gradient-bg-alt {
+  background: linear-gradient(135deg, #f43f5e 0%, #fb923c 100%);
 }
 
-/* Improve scrolling performance for large tables */
-.h-\[calc\(100vh-250px\)\] {
-  transform: translateZ(0);
-  will-change: transform;
+.gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
 }
 
-/* Ensure smooth scrolling */
-.h-\[calc\(100vh-250px\)\]::-webkit-scrollbar {
-  width: 8px;
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.h-\[calc\(100vh-250px\)\]::-webkit-scrollbar-track {
-  background: #f1f1f1;
+/* Premium Cards */
+.card-premium {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.h-\[calc\(100vh-250px\)\]::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 4px;
+.card-premium:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
-/* ========================================
-   FOOTER SPACING FIX - PREVENT CONTENT CUT
-   ======================================== */
-
-/* Add bottom padding on mobile to prevent footer from cutting content */
-@media (max-width: 640px) {
-  main {
-    padding-bottom: 100px !important;
-  }
-
-  /* Form elements - prevent iOS zoom */
-  input,
-  select,
-  textarea {
-    font-size: 16px !important;
-  }
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
 
-/* Tablet spacing */
-@media (min-width: 641px) and (max-width: 768px) {
-  main {
-    padding-bottom: 60px !important;
-  }
+::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-/* ========================================
-   RESPONSIVE BUTTON & ELEMENT FIXES
-   ======================================== */
-
-/* Make sure horizontal scrolling buttons are visible */
-.overflow-x-auto {
-  -webkit-overflow-scrolling: touch;
-  /* scrollbar-width: none; Firefox */
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
 }
 
-/* .overflow-x-auto::-webkit-scrollbar {
-    display: none; Chrome, Safari
-} */
-/* Custom scrollbar for horizontal scrolling tables */
-.custom-scrollbar {
-  overflow-x: scroll; /* Force scrollbar track to be present */
-  scrollbar-width: auto;
-  scrollbar-color: #9ca3af #e5e7eb; /* Darker thumb, visible track for Firefox */
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
-/* Ensure WebKit browsers (Chrome, Safari) always show it */
-.custom-scrollbar::-webkit-scrollbar {
-  -webkit-appearance: none;
-  display: block;
-  height: 12px; /* Slightly taller for better visibility */
-  width: 12px;
+/* Input Styles */
+input, select, textarea {
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #e5e7eb; /* Gray-200 */
-  border-radius: 6px;
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  ring: 2px;
+  ring-color: #6366f1;
+  border-color: #6366f1;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #9ca3af; /* Gray-400 */
-  border-radius: 6px;
-  border: 2px solid #e5e7eb; /* Padding around thumb */
+/* Spacing Helpers */
+.main-content {
+  padding-bottom: 5rem;
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: #6b7280; /* Gray-500 */
-}
-
-/* Ensure tabs/buttons don't get cut off */
-@media (max-width: 640px) {
-  .flex.gap-2,
-  .flex.gap-4 {
-    flex-wrap: wrap;
-  }
-
-  /* Smaller buttons on mobile */
-  button {
-    font-size: 0.875rem;
-    padding: 0.5rem 0.75rem;
+@media (min-width: 768px) {
+  .main-content {
+    padding-bottom: 2rem;
   }
 }

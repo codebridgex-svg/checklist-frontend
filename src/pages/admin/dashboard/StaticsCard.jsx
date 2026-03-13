@@ -1,4 +1,4 @@
-import { ListTodo, CheckCircle2, Clock, AlertTriangle, BarChart3, XCircle, Calendar } from "lucide-react"
+import { ListTodo, CheckCircle2, Clock, AlertTriangle, BarChart3, XCircle } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 export default function StatisticsCards({
@@ -7,298 +7,159 @@ export default function StatisticsCards({
   completeTask,
   pendingTask,
   overdueTask,
-  notDoneTask,     // <-- take from props (REAL backend value)
+  notDoneTask,
   dateRange = null
 }) {
-
   const navigate = useNavigate();
 
   const completionRate = totalTask > 0 ? (completeTask / totalTask) * 100 : 0;
-
-  // DO NOT calculate notDone here!
-  // const notDoneTask = totalTask - completeTask - pendingTask - overdueTask;
-
   const pendingRate = totalTask > 0 ? (pendingTask / totalTask) * 100 : 0;
   const notDoneRate = totalTask > 0 ? (notDoneTask / totalTask) * 100 : 0;
   const overdueRate = totalTask > 0 ? (overdueTask / totalTask) * 100 : 0;
 
+  const circumference = 251.3;
+  const completedDash = (completionRate * circumference) / 100;
+  const pendingDash = (pendingRate * circumference) / 100;
+  const notDoneDash = (notDoneRate * circumference) / 100;
+  const overdueDash = (overdueRate * circumference) / 100;
 
-  // Calculate stroke dash arrays for each segment
-  const circumference = 251.3; // 2 * π * 40
-  const completedDash = completionRate * circumference / 100;
-  const pendingDash = pendingRate * circumference / 100;
-  const notDoneDash = notDoneRate * circumference / 100;
-  const overdueDash = overdueRate * circumference / 100;
-
-  // Format date for display
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
-  };
+  const cards = [
+    {
+      label: "Total Tasks",
+      value: totalTask,
+      icon: ListTodo,
+      color: "bg-indigo-500",
+      lightColor: "bg-indigo-50",
+      textColor: "text-indigo-700",
+      desc: dateRange ? "Selected period" : "Checklist database",
+      onClick: () => navigate('/dashboard/data/sales')
+    },
+    {
+      label: dashboardType === "delegation" ? "Completed Once" : "Completed",
+      value: completeTask,
+      icon: CheckCircle2,
+      color: "bg-emerald-500",
+      lightColor: "bg-emerald-50",
+      textColor: "text-emerald-700",
+      desc: "Successfully done",
+      onClick: () => navigate('/dashboard/history')
+    },
+    {
+      label: dashboardType === "delegation" ? "Completed Twice" : "Pending",
+      value: pendingTask,
+      icon: Clock,
+      color: "bg-amber-500",
+      lightColor: "bg-amber-50",
+      textColor: "text-amber-700",
+      desc: "Awaiting action",
+      onClick: () => navigate('/dashboard/data/sales')
+    },
+    {
+      label: "Not Done",
+      value: notDoneTask,
+      icon: XCircle,
+      color: "bg-slate-500",
+      lightColor: "bg-slate-50",
+      textColor: "text-slate-700",
+      desc: "Missed schedules",
+      onClick: null
+    },
+    {
+      label: dashboardType === "delegation" ? "Completed 3+" : "Overdue",
+      value: overdueTask,
+      icon: AlertTriangle,
+      color: "bg-rose-500",
+      lightColor: "bg-rose-50",
+      textColor: "text-rose-700",
+      desc: "Critical attention",
+      onClick: () => navigate('/dashboard/data/sales')
+    }
+  ];
 
   return (
-    <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
-      {/* Left side - Statistics Cards */}
-      <div className="lg:w-1/2">
-        <div className="grid grid-cols-3 sm:grid-cols-2 gap-3 sm:gap-4 justify-center">
-
-          {/* Total Tasks - Updated description for date range */}
-          <div 
-            onClick={() => navigate('/dashboard/data/sales')}
-            className="rounded-lg border border-l-4 border-l-blue-500 shadow-md hover:shadow-lg transition-all bg-white cursor-pointer"
-          >
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-blue-50 to-blue-100 rounded-tr-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-blue-700">Total Tasks</h3>
-              <ListTodo className="h-3 w-3 sm:h-4 sm:w-4 text-blue-500" />
-            </div>
-            <div className="hidden sm:block p-3 sm:p-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-700">{totalTask}</div>
-              <p className="text-xs text-blue-600">
-                {dateRange ? (
-                  <>Tasks in selected period</>
-                ) : dashboardType === "delegation" ? (
-                  "All tasks"
-                ) : (
-                  "Total tasks in checklist"
+    <div className="flex flex-col xl:flex-row gap-6">
+      {/* Left side - Statistics Grid */}
+      <div className="xl:flex-1">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+          {cards.map((card, i) => (
+            <div 
+              key={i}
+              onClick={card.onClick}
+              className={`card-premium p-5 flex flex-col justify-between group ${card.onClick ? 'cursor-pointer' : ''} ${i === cards.length - 1 ? 'col-span-2 lg:col-span-1' : ''}`}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div className={`p-2.5 rounded-xl ${card.lightColor} group-hover:scale-110 transition-transform duration-300`}>
+                  <card.icon className={`h-5 w-5 ${card.textColor}`} />
+                </div>
+                {card.onClick && (
+                   <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity">View Details</span>
                 )}
-              </p>
+              </div>
+              <div>
+                <div className="text-3xl font-black text-slate-900 tracking-tight mb-1">{card.value}</div>
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider">{card.label}</div>
+                <p className="text-[10px] text-slate-400 mt-2 font-medium">{card.desc}</p>
+              </div>
             </div>
-
-            <div className="sm:hidden p-3 sm:p-4 mt-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-700">{totalTask}</div>
-              <p className="text-xs text-blue-600">
-                {dateRange ? "Selected period" : "Total tasks"}
-              </p>
-            </div>
-          </div>
-
-          {/* Completed Tasks */}
-          <div 
-            onClick={() => navigate('/dashboard/history')}
-            className="rounded-lg border border-l-4 border-l-green-500 shadow-md hover:shadow-lg transition-all bg-white cursor-pointer"
-          >
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-green-50 to-green-100 rounded-tr-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-green-700">
-                {dashboardType === "delegation" ? "Completed Once" : "Completed Tasks"}
-              </h3>
-              <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-green-500" />
-            </div>
-            <div className="p-3 sm:p-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-green-700">{completeTask}</div>
-              <p className="text-xs text-green-600">
-                {dateRange ? (
-                  <>Completed in period</>
-                ) : dashboardType === "delegation" ? (
-                  "Tasks completed once"
-                ) : (
-                  "Total completed"
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Pending Tasks / Completed Twice */}
-          <div 
-            onClick={() => navigate('/dashboard/data/sales')}
-            className="rounded-lg border border-l-4 border-l-amber-500 shadow-md hover:shadow-lg transition-all bg-white cursor-pointer"
-          >
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-amber-50 to-amber-100 rounded-tr-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-amber-700">
-                {dashboardType === "delegation" ? "Completed Twice" : "Pending Tasks"}
-              </h3>
-              {dashboardType === "delegation" ? (
-                <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
-              ) : (
-                <Clock className="h-3 w-3 sm:h-4 sm:w-4 text-amber-500" />
-              )}
-            </div>
-            <div className="p-3 sm:p-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-amber-700">{pendingTask}</div>
-              <p className="text-xs text-amber-600">
-                {dateRange ? (
-                  <>Pending in period</>
-                ) : dashboardType === "delegation" ? (
-                  "Tasks completed twice"
-                ) : (
-                  "Including today"
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Not Done Tasks */}
-          <div className="rounded-lg border border-l-4 border-l-gray-500 shadow-md hover:shadow-lg transition-all bg-white">
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-gray-50 to-gray-100 rounded-tr-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-gray-700">Not Done</h3>
-              <XCircle className="h-3 w-3 sm:h-4 sm:w-4 text-gray-500" />
-            </div>
-            <div className="p-3 sm:p-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-700">{notDoneTask}</div>
-              <p className="text-xs text-gray-600">
-                {dateRange ? (
-                  <>Not done in period</>
-                ) : dashboardType === "delegation" ? (
-                  "Tasks not completed"
-                ) : (
-                  "Absent Day's tasks"
-                )}
-              </p>
-            </div>
-          </div>
-
-          {/* Overdue Tasks / Completed 3+ Times */}
-          <div 
-            onClick={() => navigate('/dashboard/data/sales')}
-            className="rounded-lg border border-l-4 border-l-red-500 shadow-md hover:shadow-lg transition-all bg-white sm:col-span-2 lg:col-span-1 col-span-2 cursor-pointer"
-          >
-            <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-red-50 to-red-100 rounded-tr-lg p-3 sm:p-4">
-              <h3 className="text-xs sm:text-sm font-medium text-red-700">
-                {dashboardType === "delegation" ? "Completed 3+ Times" : "Overdue Tasks"}
-              </h3>
-              {dashboardType === "delegation" ? (
-                <CheckCircle2 className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
-              ) : (
-                <AlertTriangle className="h-3 w-3 sm:h-4 sm:w-4 text-red-500" />
-              )}
-            </div>
-            <div className="p-3 sm:p-4">
-              <div className="text-xl sm:text-2xl lg:text-3xl font-bold text-red-700">{overdueTask}</div>
-              <p className="text-xs text-red-600">
-                {dateRange ? (
-                  <>Overdue in period</>
-                ) : dashboardType === "delegation" ? (
-                  "Tasks completed 3+ times"
-                ) : (
-                  "Past due"
-                )}
-              </p>
-            </div>
-          </div>
-
+          ))}
         </div>
       </div>
 
-      {/* Right side - Circular Progress Graph */}
-      <div className="lg:w-1/2">
-        <div className="rounded-lg border border-l-4 border-l-indigo-500 shadow-md hover:shadow-lg transition-all bg-white h-auto">
-          <div className="flex flex-row items-center justify-between space-y-0 pb-2 bg-gradient-to-r from-indigo-50 to-indigo-100 rounded-tr-lg p-3">
-            <h3 className="text-xs sm:text-sm font-medium text-indigo-700">
-              {dateRange ? "Period Progress" : "Overall Progress"}
-            </h3>
-            <BarChart3 className="h-3 w-3 sm:h-4 sm:w-4 text-indigo-500" />
+      {/* Right side - Premium Analytics Card */}
+      <div className="xl:w-[400px]">
+        <div className="card-premium p-6 h-full flex flex-col bg-slate-900 text-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-3xl -mr-16 -mt-16" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-emerald-500/10 blur-3xl -ml-16 -mb-16" />
+          
+          <div className="flex items-center justify-between mb-8 relative z-10">
+            <div>
+              <h3 className="text-lg font-bold tracking-tight">Productivity</h3>
+              <p className="text-xs text-slate-400">{dateRange ? "Period analysis" : "Overall performance"}</p>
+            </div>
+            <div className="p-2 bg-white/5 rounded-lg">
+              <BarChart3 className="h-5 w-5 text-indigo-400" />
+            </div>
           </div>
-          <div className="p-4 sm:p-6">
-            {/* Single layout for all screen sizes - Circle left, Legend right */}
-            <div className="flex flex-row items-center justify-between">
-              {/* Circular Progress - Left */}
-              <div className="relative w-32 h-32 xs:w-36 xs:h-36 sm:w-40 sm:h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 xl:w-52 xl:h-52">
-                <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                  {/* Background circle */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#e5e7eb"
-                    strokeWidth="8"
-                    fill="none"
-                  />
-                  {/* Overdue segment - red */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#ef4444"
-                    strokeWidth="8"
-                    fill="none"
-                    strokeLinecap="line"
-                    strokeDasharray={`${overdueDash} ${circumference}`}
-                  />
-                  {/* Not Done segment - gray */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#6b7280"
-                    strokeWidth="8"
-                    fill="none"
-                    strokeLinecap="line"
-                    strokeDasharray={`${notDoneDash} ${circumference}`}
-                    strokeDashoffset={-overdueDash}
-                  />
-                  {/* Pending segment - amber/yellow */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#f59e0b"
-                    strokeWidth="8"
-                    fill="none"
-                    strokeLinecap="line"
-                    strokeDasharray={`${pendingDash} ${circumference}`}
-                    strokeDashoffset={-(overdueDash + notDoneDash)}
-                  />
-                  {/* Completed segment - green */}
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r="40"
-                    stroke="#10b981"
-                    strokeWidth="8"
-                    fill="none"
-                    strokeLinecap="line"
-                    strokeDasharray={`${completedDash} ${circumference}`}
-                    strokeDashoffset={-(overdueDash + notDoneDash + pendingDash)}
-                  />
-                </svg>
-                {/* Percentage text in center */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-lg xs:text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-indigo-700">
-                      {completionRate.toFixed(1)}%
-                    </div>
-                    <div className="text-xs text-gray-500 mt-1">
-                      {dateRange ? "Period" : "Overall"}
-                    </div>
-                  </div>
-                </div>
-              </div>
 
-              {/* Legend - Right */}
-              <div className="grid grid-cols-1 gap-1 xs:gap-2 sm:gap-3 text-xs xs:text-sm sm:text-base md:text-lg flex-1 max-w-[200px]">
-                <div className="flex items-center space-x-1 xs:space-x-2">
-                  <div className="w-2 h-2 xs:w-3 xs:h-3 sm:w-4 sm:h-4 rounded-full bg-green-500 flex-shrink-0"></div>
-                  <span className="font-medium">Completed:</span>
-                  <span className="text-gray-700">{completionRate.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-center space-x-1 xs:space-x-2">
-                  <div className="w-2 h-2 xs:w-3 xs:h-3 sm:w-4 sm:h-4 rounded-full bg-amber-500 flex-shrink-0"></div>
-                  <span className="font-medium">Pending:</span>
-                  <span className="text-gray-700">{pendingRate.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-center space-x-1 xs:space-x-2">
-                  <div className="w-2 h-2 xs:w-3 xs:h-3 sm:w-4 sm:h-4 rounded-full bg-gray-500 flex-shrink-0"></div>
-                  <span className="font-medium">Not Done:</span>
-                  <span className="text-gray-700">{notDoneRate.toFixed(1)}%</span>
-                </div>
-                <div className="flex items-center space-x-1 xs:space-x-2">
-                  <div className="w-2 h-2 xs:w-3 xs:h-3 sm:w-4 sm:h-4 rounded-full bg-red-500 flex-shrink-0"></div>
-                  <span className="font-medium">Overdue:</span>
-                  <span className="text-gray-700">{overdueRate.toFixed(1)}%</span>
-                </div>
+          <div className="flex items-center gap-8 flex-1 relative z-10">
+            {/* Circular Chart */}
+            <div className="relative w-36 h-36 shrink-0">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="40" stroke="rgba(255,255,255,0.05)" strokeWidth="8" fill="none" />
+                <circle cx="50" cy="50" r="40" stroke="#ef4444" strokeWidth="8" fill="none" strokeDasharray={`${overdueDash} ${circumference}`} />
+                <circle cx="50" cy="50" r="40" stroke="#64748b" strokeWidth="8" fill="none" strokeDasharray={`${notDoneDash} ${circumference}`} strokeDashoffset={-overdueDash} />
+                <circle cx="50" cy="50" r="40" stroke="#f59e0b" strokeWidth="8" fill="none" strokeDasharray={`${pendingDash} ${circumference}`} strokeDashoffset={-(overdueDash + notDoneDash)} />
+                <circle cx="50" cy="50" r="40" stroke="#10b981" strokeWidth="8" fill="none" strokeDasharray={`${completedDash} ${circumference}`} strokeDashoffset={-(overdueDash + notDoneDash + pendingDash)} />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-black">{completionRate.toFixed(0)}%</span>
+                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Score</span>
               </div>
             </div>
 
-            {/* Additional info when date range is applied */}
-            {dateRange && (
-              <div className="mt-4 pt-3 border-t border-gray-200">
-                <div className="text-xs text-gray-600 text-center">
-                  Analysis based on {totalTask} tasks from selected date range
-                </div>
-              </div>
-            )}
+            {/* Legend */}
+            <div className="flex-1 space-y-3">
+               {[
+                 { label: "Done", val: completionRate, color: "bg-emerald-500" },
+                 { label: "Pending", val: pendingRate, color: "bg-amber-500" },
+                 { label: "Missed", val: notDoneRate, color: "bg-slate-500" },
+                 { label: "Overdue", val: overdueRate, color: "bg-rose-500" }
+               ].map((item, id) => (
+                 <div key={id} className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-[11px] font-bold uppercase tracking-wider">
+                       <span className="text-slate-400">{item.label}</span>
+                       <span>{item.val.toFixed(1)}%</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                       <div className={`h-full ${item.color}`} style={{ width: `${item.val}%` }} />
+                    </div>
+                 </div>
+               ))}
+            </div>
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/5 text-[10px] text-slate-500 font-medium text-center relative z-10">
+            Real-time synchronization with Supabase Cluster
           </div>
         </div>
       </div>
